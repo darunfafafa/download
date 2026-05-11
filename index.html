@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>APP下载页</title>
+<script>
+function isWeiXinOrQQ(){
+    let ua=navigator.userAgent.toLowerCase();
+    return ua.match(/micromessenger/)||ua.match(/qq/);
+}
+if(isWeiXinOrQQ()){
+    document.write(`
+    <style>
+    body{margin:0;padding:0;background:#fff;text-align:center;padding-top:100px;}
+    .box{font-size:18px;color:#333;line-height:2.2;padding:0 30px;}
+    </style>
+    <div class="box">
+    请点击右上角<br>选择「在浏览器打开」<br>即可正常下载
+    </div>
+    `);
+}
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+.background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+.background img { width: 100%; height: 100%; object-fit: cover; }
+.logo-box { position: fixed; top: 5%; left: 5%; z-index: 10; display: flex; align-items: center; gap: 2vw; }
+.logo-img { width: 8vw; height: 8vw; border-radius: 6px; object-fit: cover; }
+.logo-title { font-size: 4vw; color: #fff; font-weight: bold; text-shadow: 1px 1px 3px #000; }
+.logo-desc { font-size: 2.5vw; color: #eee; text-shadow: 1px 1px 3px #000; }
+.top-desc { position: fixed; top: 4%; right: 2%; width: 56%; z-index: 10; text-align: center; color: #ffff00; font-family: "Microsoft Yahei",sans-serif; font-size: 2.4vw; line-height: 1.7; text-shadow: 1px 1px 2px #000; }
+.swiper-container { position: fixed; top: 14%; left: 50%; transform: translateX(-50%); width: 88%; height: 61%; z-index: 5; }
+.swiper { width: 100%; height: 100%; }
+.swiper-slide { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.swiper-slide img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.download-btn { position: fixed; top: 75%; left: 50%; transform: translateX(-50%); width: 75%; z-index: 10; }
+.download-btn a { display: block; width: 100%; padding: 3.5vw 0; text-align: center; background: linear-gradient(90deg, #0099ee, #00bfff); color: #fff; text-decoration: none; border-radius: 8px; font-size: 4.5vw; font-weight: bold; box-shadow: 0 0 3vw rgba(0,191,255,0.6); transition: all 0.2s ease; position: relative; overflow: hidden; cursor: pointer; }
+.download-btn a:active { transform: scale(0.96); box-shadow: 0 0 5vw rgba(0,191,255,0.8); }
+.tip-wrap { position: fixed; bottom: 8%; left: 0; right: 0; text-align: center; z-index: 10; }
+.tip-link a { display: block; color: #ffff00; font-size: 4.8vw; font-weight: bold; text-decoration: underline; text-shadow: 0 0 2vw rgba(255,255,0,0.9); margin-bottom: 0.5vw; }
+.tip-sub-text { display: block; color: #ffff00; font-size: 3.8vw; text-shadow: 0 0 1.5vw rgba(255,255,0,0.6); }
+.ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.35); animation: rippleEffect 0.6s ease-out; pointer-events: none; }
+@keyframes rippleEffect { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+</style>
+</head>
+<body>
+
+<div class="background">
+    <img src="fy/bg.png" alt="背景">
+</div>
+
+<div class="logo-box">
+    <img class="logo-img" src="fy/logo.png" alt="Logo">
+    <div>
+        <div class="logo-title">51吃瓜成人版</div>
+        <div class="logo-desc">全网海量视频搜集</div>
+    </div>
+</div>
+
+<div class="top-desc">
+由于软件特殊性无法上架各大应用商店，<br>
+无法通过大陆备案，部分机型可能<br>
+会阻止第三方来源安装，请点下方<br>
+安装教程安装软件。
+</div>
+
+<div class="swiper-container">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="fy/pic1.png"></div>
+            <div class="swiper-slide"><img src="fy/pic2.png"></div>
+            <div class="swiper-slide"><img src="fy/pic3.png"></div>
+        </div>
+    </div>
+</div>
+
+<div class="download-btn">
+    <!-- 这里保持你的按钮文案 -->
+    <a href="javascript:void(0);" id="downBtn" onclick="smartDownload()">安卓立即下载</a>
+</div>
+
+<div class="tip-wrap">
+    <div class="tip-link">
+        <a href="safe.html" id="tipBtn">点击查看安卓机型安装教程</a>
+    </div>
+    <div class="tip-sub-text">*下载后请开启飞行模式安装*</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+new Swiper('.swiper', {
+    direction: 'vertical',
+    loop: true,
+    autoplay: { delay: 2800, disableOnInteraction: false },
+    speed: 800
+});
+
+async function smartDownload() {
+    // 仓库配置
+    const GH_USER = "darunfafafa"; 
+    const GH_REPO = "download";
+    const APK_DIR = "apk"; 
+    
+    try {
+        const response = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${APK_DIR}`);
+        if (!response.ok) throw new Error();
+        const files = await response.json();
+        const apkFiles = files.filter(f => f.name.toLowerCase().endsWith('.apk'));
+        
+        if (apkFiles.length > 0) {
+            // 抓取最后一个文件
+            apkFiles.sort((a, b) => a.name.localeCompare(b.name));
+            window.location.href = apkFiles[apkFiles.length - 1].download_url;
+        } else {
+            // 没找到包时的备选跳转
+            window.location.href = `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
+        }
+    } catch (e) {
+        window.location.href = `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
+    }
+}
+
+// 按钮波纹特效
+function createRipple(el) {
+    el.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = e.clientX - rect.left - size/2 + 'px';
+        ripple.style.top = e.clientY - rect.top - size/2 + 'px';
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    });
+}
+createRipple(document.getElementById('downBtn'));
+createRipple(document.getElementById('tipBtn'));
+</script>
+</body>
+</html>
