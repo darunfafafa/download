@@ -55,7 +55,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 <div class="logo-box">
     <img class="logo-img" src="fy/logo.png" alt="Logo">
     <div>
-        <div class="logo-title">51吃瓜成人版</div>
+        <div class="logo-title">51视频成人版</div>
         <div class="logo-desc">全网海量视频搜集</div>
     </div>
 </div>
@@ -78,7 +78,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <div class="download-btn">
-    <!-- 这里保持你的按钮文案 -->
     <a href="javascript:void(0);" id="downBtn" onclick="smartDownload()">安卓立即下载</a>
 </div>
 
@@ -104,6 +103,9 @@ async function smartDownload() {
     const GH_REPO = "download";
     const APK_DIR = "apk"; 
     
+    // 加速前缀
+    const PROXY_URL = "https://ghp.ci/";
+
     try {
         const response = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${APK_DIR}`);
         if (!response.ok) throw new Error();
@@ -113,13 +115,15 @@ async function smartDownload() {
         if (apkFiles.length > 0) {
             // 抓取最后一个文件
             apkFiles.sort((a, b) => a.name.localeCompare(b.name));
-            window.location.href = apkFiles[apkFiles.length - 1].download_url;
+            const rawUrl = apkFiles[apkFiles.length - 1].download_url;
+            
+            // 拼接加速地址
+            window.location.href = PROXY_URL + rawUrl;
         } else {
-            // 没找到包时的备选跳转
-            window.location.href = `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
+            window.location.href = PROXY_URL + `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
         }
     } catch (e) {
-        window.location.href = `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
+        window.location.href = PROXY_URL + `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
     }
 }
 
