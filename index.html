@@ -78,6 +78,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 </div>
 
 <div class="download-btn">
+    <!-- 这里保持你的按钮文案 -->
     <a href="javascript:void(0);" id="downBtn" onclick="smartDownload()">安卓立即下载</a>
 </div>
 
@@ -97,40 +98,33 @@ new Swiper('.swiper', {
     speed: 800
 });
 
-// 回归原生的下载逻辑，不走任何第三方加速
 async function smartDownload() {
+    // 仓库配置
     const GH_USER = "darunfafafa"; 
     const GH_REPO = "download";
     const APK_DIR = "apk"; 
     
     try {
-        // 通过 API 实时获取文件列表，确保能匹配到你自动换包后的新文件名
-        const response = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${APK_DIR}?t=${Date.now()}`);
+        const response = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${APK_DIR}`);
         if (!response.ok) throw new Error();
-        
         const files = await response.json();
-        // 只选 APK
         const apkFiles = files.filter(f => f.name.toLowerCase().endsWith('.apk'));
         
         if (apkFiles.length > 0) {
-            // 排序取最新的文件名
+            // 抓取最后一个文件
             apkFiles.sort((a, b) => a.name.localeCompare(b.name));
-            const latestFile = apkFiles[apkFiles.length - 1];
-            
-            // 直接跳转到 GitHub 官方的下载地址，不再拼接任何加速前缀
-            window.location.href = latestFile.download_url;
+            window.location.href = apkFiles[apkFiles.length - 1].download_url;
         } else {
-            alert("暂无可用下载包");
+            // 没找到包时的备选跳转
+            window.location.href = `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
         }
     } catch (e) {
-        // 保底直接跳到仓库目录
         window.location.href = `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
     }
 }
 
-// 按钮波纹
+// 按钮波纹特效
 function createRipple(el) {
-    if(!el) return;
     el.addEventListener('click', function(e) {
         const ripple = document.createElement('span');
         ripple.className = 'ripple';
