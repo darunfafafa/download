@@ -90,7 +90,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-// 轮播图初始化
 new Swiper('.swiper', {
     direction: 'vertical',
     loop: true,
@@ -98,44 +97,38 @@ new Swiper('.swiper', {
     speed: 800
 });
 
-// 核心下载逻辑
+// 回归原生的下载逻辑，不走任何第三方加速
 async function smartDownload() {
     const GH_USER = "darunfafafa"; 
     const GH_REPO = "download";
     const APK_DIR = "apk"; 
     
     try {
-        // 使用时间戳请求 API，防止浏览器缓存旧的文件列表（解决换包延迟）
-        const response = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${APK_DIR}?t=${new Date().getTime()}`);
-        if (!response.ok) throw new Error("获取文件列表失败");
+        // 通过 API 实时获取文件列表，确保能匹配到你自动换包后的新文件名
+        const response = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${APK_DIR}?t=${Date.now()}`);
+        if (!response.ok) throw new Error();
         
         const files = await response.json();
-        
-        // 自动过滤：只筛选 .apk 文件，无视文件夹内的 .txt 文件
+        // 只选 APK
         const apkFiles = files.filter(f => f.name.toLowerCase().endsWith('.apk'));
         
         if (apkFiles.length > 0) {
-            // 排序并抓取最新命名的 apk 
+            // 排序取最新的文件名
             apkFiles.sort((a, b) => a.name.localeCompare(b.name));
             const latestFile = apkFiles[apkFiles.length - 1];
             
-            // 拼接国内极速下载地址 (ghp.ci 前缀)
-            // 结尾加随机数 r，强制国内加速节点去 GitHub 拿最新的包，解决 404 问题
-            const rawUrl = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/${APK_DIR}/${latestFile.name}`;
-            const fastUrl = `https://ghp.ci/${rawUrl}?r=${Math.random().toString(36).substring(7)}`;
-            
-            console.log("正在通过加速通道请求最新包:", latestFile.name);
-            window.location.href = fastUrl;
+            // 直接跳转到 GitHub 官方的下载地址，不再拼接任何加速前缀
+            window.location.href = latestFile.download_url;
         } else {
-            alert("正在生成最新安装包，请稍后再试");
+            alert("暂无可用下载包");
         }
     } catch (e) {
-        // 报错保底：直接通过加速通道进入仓库目录
-        window.location.href = `https://ghp.ci/https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
+        // 保底直接跳到仓库目录
+        window.location.href = `https://github.com/${GH_USER}/${GH_REPO}/tree/main/${APK_DIR}`;
     }
 }
 
-// 按钮波纹特效
+// 按钮波纹
 function createRipple(el) {
     if(!el) return;
     el.addEventListener('click', function(e) {
